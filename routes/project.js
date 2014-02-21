@@ -10,6 +10,10 @@ exports.projectInfo = function(req, res) { 
     if(err) console.log(err);
     res.json(projects[0]);
   }
+
+  models.Project
+    .find({_id: projectID})
+    .exec(afterQuery);
 }
 
 exports.addProject = function(req, res) {
@@ -18,6 +22,23 @@ exports.addProject = function(req, res) {
 
   // make a new Project and save it to the DB
   // YOU MUST send an OK response w/ res.send();
+
+  var newPost = new models.Project({
+    title: form_data.project_title,
+    date: new Date(form_data.date),
+    summary: form_data.summary,
+    image: form_data.image_url
+  });
+  console.log('next is the project model from the post: ');
+  console.log(newPost);
+
+  newPost.save(function(err, obj) {
+    if (err) {
+      console.log(err);
+      res.send(500);
+    };
+    res.send();
+  });
 }
 
 exports.deleteProject = function(req, res) {
@@ -25,4 +46,12 @@ exports.deleteProject = function(req, res) {
 
   // find the project and remove it
   // YOU MUST send an OK response w/ res.send();
+
+  models.Project
+    .find({_id: projectID})
+    .remove()
+    .exec(function(err, obj) {
+      if(err) console.log(err);
+      res.send();
+    });
 }
